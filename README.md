@@ -31,7 +31,7 @@ pip install git+https://github.com/RemDelaporteMathurin/FESTIM@v0.10.0
 To run the FESTIM simulation:
 
 ```
-python example.py
+python3 example.py
 ```
 
 This will produce any detailed results files
