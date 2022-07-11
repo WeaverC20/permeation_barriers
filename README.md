@@ -10,9 +10,7 @@ Analytical solutions have been evaluated for a cartesian and cylindrical case:
 
 <img src="https://user-images.githubusercontent.com/65899899/178293593-fee437f5-e3a7-4180-b464-a5877179f6ec.jpg" width="500"/>
 
-
-
-To be able to run scripts:
+<br>
 
 ##  Run FESTIM
 
