@@ -12,7 +12,7 @@ Analytical solutions have been evaluated for a cartesian and cylindrical case:
 
 <br>
 
-##  Run FESTIM
+##  Run numerical simulations using FESTIM
 
 Run a FEniCS container:
 
