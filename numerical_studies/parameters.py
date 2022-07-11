@@ -6,9 +6,9 @@ vertices = np.unique(
     np.concatenate([np.linspace(0, 10e-6, num=1990), np.linspace(10e-6, 20e-6, num=10)])
 )
 
-my_model = F.Simulation(log_level=20)
+my_model = F.Simulation(log_level=30)
 
-# define mesh
+# define meshs
 my_model.mesh = F.MeshFromVertices(vertices=vertices)
 
 # define materials
