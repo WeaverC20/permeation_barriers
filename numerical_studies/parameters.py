@@ -8,7 +8,7 @@ vertices = np.unique(
 
 my_model = F.Simulation(log_level=30)
 
-# define meshs
+# define mesh
 my_model.mesh = F.MeshFromVertices(vertices=vertices)
 
 # define materials
