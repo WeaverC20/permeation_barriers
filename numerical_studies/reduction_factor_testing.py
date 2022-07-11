@@ -1,6 +1,5 @@
 from parameters import my_model, eurofer
 import FESTIM as F
-from solve_H_transport import run_H_transport
 
 if __name__ == "__main__":
 
@@ -39,4 +38,5 @@ if __name__ == "__main__":
                 export.define_xdmf_file()
 
         print("Current step is S_0_eur = {:.1e}".format(reduced_S_0_eurofer))
-        run_H_transport(my_model)
+        my_model.initialise()
+        my_model.run()
