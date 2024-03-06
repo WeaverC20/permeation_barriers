@@ -1,29 +1,25 @@
 from parameters import my_model, eurofer
 import festim as F
+import numpy as np
 
-if __name__ == "__main__":
+S_0_eur_original = 2.4088e23
 
-    S_0_eur_original = 2.4088e23
+reduction_factors = np.geomspace(1e2, 1e04, num=10)
+temperature_values = [400, 500, 600, 700]
 
-    reduction_factors = [
-        1e0,
-        1e1,
-        1e2,
-        1e3,
-        1e4,
-        1e5,
-        1e6,
-        1e7,
-    ]
+folder = "Results/parametric_study/"
 
-    folder = "Results/1D_results/reduction_factor/log_scale"
+for T in temperature_values:
+    # standard case
+
     E_S_eurofer = 0.3026
+
     for reduction_factor in reduction_factors:
         reduced_S_0_eurofer = S_0_eur_original / reduction_factor
         eurofer.S_0 = reduced_S_0_eurofer
         eurofer.E_S = E_S_eurofer
 
-        results_folder = folder + "/S_0_eur={:.1e}/".format(reduced_S_0_eurofer)
+        results_folder = folder + "T={:.0f}/factor={:.0e}/".format(T, reduction_factor)
 
         for export in my_model.exports.exports:
             if isinstance(export, F.DerivedQuantities):
@@ -33,6 +29,7 @@ if __name__ == "__main__":
                 export.append = False
                 export.define_xdmf_file()
 
-        print("Current step is S_0_eur = {:.1e}".format(reduced_S_0_eurofer))
+        my_model.T = F.Temperature(value=T)
+        print("Current case: T = {}, reduction factor ={}".format(T, reduction_factor))
         my_model.initialise()
         my_model.run()
