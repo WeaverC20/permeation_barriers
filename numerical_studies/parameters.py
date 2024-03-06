@@ -1,62 +1,74 @@
 import numpy as np
-import FESTIM as F
-import properties
+import festim as F
 
-vertices = np.unique(
-    np.concatenate([np.linspace(0, 10e-6, num=1990), np.linspace(10e-6, 20e-6, num=10)])
-)
+# taken from (Reiter, 1990)
+D_0_lipb = 4.03e-08
+E_D_lipb = 0.2021
 
-my_model = F.Simulation(log_level=30)
+# taken from (Aiello, 2008)
+S_0_lipb = 1.427214e23
+E_S_lipb = 0.133
+
+# taken from (Chen, 2021)
+D_0_eurofer = 3.15e-08
+E_D_eurofer = 0.0622
+S_0_eurofer = 2.4088e23
+E_S_eurofer = 0.3026
+
+my_model = F.Simulation(log_level=40)
 
 # define mesh
+vertices = np.unique(
+    np.concatenate([np.linspace(0, 1e-5, num=100), np.linspace(1e-5, 2e-5, num=100)])
+)
 my_model.mesh = F.MeshFromVertices(vertices=vertices)
 
 # define materials
 lipb = F.Material(
     id=1,
-    borders=[0, 10e-06],
-    D_0=properties.D_0_lipb,
-    E_D=properties.E_D_lipb,
-    S_0=properties.S_0_lipb,
-    E_S=properties.E_S_lipb,
+    borders=[0, 1e-05],
+    D_0=D_0_lipb,
+    E_D=E_D_lipb,
+    S_0=S_0_lipb,
+    E_S=E_S_lipb,
 )
 eurofer = F.Material(
     id=2,
-    borders=[10e-06, 20e-06],
-    D_0=properties.D_0_eurofer,
-    E_D=properties.E_D_eurofer,
-    S_0=properties.S_0_eurofer,
-    E_S=properties.E_S_eurofer,
+    borders=[1e-05, 2e-05],
+    D_0=D_0_eurofer,
+    E_D=E_D_eurofer,
+    S_0=S_0_eurofer,
+    E_S=E_S_eurofer,
 )
 my_model.materials = F.Materials([lipb, eurofer])
 
-# define traps
-# trap_1 = F.Trap(
-#     k_0=5.22e-17, E_k=0.39, p_0=1e13 * 0, E_p=1.0, materials=eurofer, density=3
-# )
-# my_model.traps = F.Traps([trap_1])
-
 # define temperature
-my_model.T = F.Temperature(value=598.15)
+my_model.T = F.Temperature(value=600)
 
 # define boundary conditions
 my_model.boundary_conditions = [
-    F.DirichletBC(surfaces=[1], value=1e20),
-    F.DirichletBC(surfaces=[2], value=0),
+    F.DirichletBC(surfaces=1, value=1e20, field="solute"),
+    F.DirichletBC(surfaces=2, value=0, field="solute"),
 ]
 
 # define settings
-my_model.dt = F.Stepsize(initial_value=100, stepsize_change_ratio=1.1, dt_min=1e-4)
 my_model.settings = F.Settings(
     absolute_tolerance=1e10,
-    relative_tolerance=1e-08,
+    relative_tolerance=1e-10,
     maximum_iterations=30,
-    final_time=864000,
+    transient=False,
+    chemical_pot=True,
 )
 
 # define exports
-my_derived_quantities = F.DerivedQuantities(filename="Results/derived_quantities.csv")
-
+my_derived_quantities = F.DerivedQuantities(
+    [
+        F.TotalVolume("solute", volume=1),
+        F.TotalVolume("solute", volume=2),
+        F.SurfaceFlux("solute", surface=2),
+    ],
+    filename="Results/parametric_study/standard/derived_quantities.csv",
+)
 my_model.exports = F.Exports(
     [
         F.XDMFExport(
