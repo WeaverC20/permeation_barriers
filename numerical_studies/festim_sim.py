@@ -21,11 +21,7 @@ def festim_sim_permeation_barrier(PRF, T, results_folder):
     my_model = F.Simulation(log_level=40)
 
     # define mesh
-    vertices = np.unique(
-        np.concatenate(
-            [np.linspace(0, 1e-5, num=100), np.linspace(1e-5, 2e-5, num=100)]
-        )
-    )
+    vertices = np.linspace(0, 2e-5, num=1000)
     my_model.mesh = F.MeshFromVertices(vertices=vertices)
 
     # define materials
