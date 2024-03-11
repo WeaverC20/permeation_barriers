@@ -41,10 +41,7 @@ plt.plot(1 / T, solutbility_al, label="Al")
 plt.legend()
 plt.yscale("log")
 
-# plt.figure()
-# plt.plot(T, s_comp_eurofer_lipb)
-
 plt.figure()
-plt.plot(T, normalised_s_comp_eurofer_lipb)
+plt.plot(T, s_comp_eurofer_lipb)
 
 plt.show()
