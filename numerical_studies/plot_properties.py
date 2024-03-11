@@ -42,6 +42,7 @@ plt.legend()
 plt.yscale("log")
 
 plt.figure()
+plt.yscale("log")
 plt.plot(T, s_comp_eurofer_lipb)
 
 plt.show()
