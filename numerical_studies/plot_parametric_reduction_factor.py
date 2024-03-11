@@ -5,16 +5,14 @@ from scipy.stats import linregress
 reduction_factors = np.geomspace(1e0, 1e08, num=50)
 results_folder = "Results/parametric_study/reduction_factor/"
 
-standard_case = results_folder + "standard_case/derived_quantities.csv"
+standard_case = results_folder + "prf=1/derived_quantities.csv"
 standard_data = np.genfromtxt(standard_case, delimiter=",", names=True)
 standard_flux = standard_data["Flux_surface_2_solute"] * -1
 
 modified_fluxes = []
 
 for factor in reduction_factors:
-    filename_data = results_folder + "factor={:.1e}/derived_quantities.csv".format(
-        factor
-    )
+    filename_data = results_folder + "prf={:.1e}/derived_quantities.csv".format(factor)
     data = np.genfromtxt(filename_data, delimiter=",", names=True)
     modified_fluxes.append(data["Flux_surface_2_solute"] * -1)
 
