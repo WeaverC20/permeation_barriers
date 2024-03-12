@@ -16,18 +16,26 @@ S_0_eurofer = 2.4088e23
 E_S_eurofer = 0.3026
 
 
-def festim_sim_permeation_barrier(PRF, T, results_folder):
+def festim_sim_permeation_barrier(
+    L_eurofer=1e-05, L_lipb=1e-05, PRF=1, T=600, results_folder="Results/"
+):
 
     my_model = F.Simulation(log_level=40)
 
     # define mesh
-    vertices = np.linspace(0, 2e-5, num=1000)
+    if L_eurofer < L_lipb:
+        dx = L_eurofer / 100
+    else:
+        dx = L_lipb / 100
+    size = L_eurofer + L_lipb
+    cells_required = int(size / dx)
+    vertices = np.linspace(0, size, num=cells_required)
     my_model.mesh = F.MeshFromVertices(vertices=vertices)
 
     # define materials
     lipb = F.Material(
         id=1,
-        borders=[0, 1e-05],
+        borders=[0, L_lipb],
         D_0=D_0_lipb,
         E_D=E_D_lipb,
         S_0=S_0_lipb,
@@ -35,7 +43,7 @@ def festim_sim_permeation_barrier(PRF, T, results_folder):
     )
     eurofer = F.Material(
         id=2,
-        borders=[1e-05, 2e-05],
+        borders=[L_lipb, size],
         D_0=D_0_eurofer,
         E_D=E_D_eurofer,
         S_0=S_0_eurofer / PRF,
