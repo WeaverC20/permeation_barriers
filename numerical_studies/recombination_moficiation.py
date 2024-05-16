@@ -32,7 +32,7 @@ def festim_sim_permeation_barrier(
     if PRF == 1:
         my_model.boundary_conditions = [
             F.DirichletBC(surfaces=1, value=1e20, field="solute"),
-            F.DirichletBC(surfaces=2, value=0, field="solute"),
+            F.RecombinationFlux(Kr_0=1.41e-26, E_Kr=0.257, order=2, surfaces=2),
         ]
     else:
         modified_kr_0 = PRF
@@ -73,16 +73,16 @@ if __name__ == "__main__":
     # testing
     test_values = np.geomspace(1e-28, 1e-18, num=50)
     for value in test_values:
-        PRF_value = value
-        testing_results_folder = results_folder + "modification={:.1e}/".format(value)
+        print("testing PRF value = {:.2e}".format(value))
+        testing_results_folder = results_folder + "modification={:.2e}/".format(value)
         festim_sim_permeation_barrier(
             T=T, PRF=value, results_folder=testing_results_folder, testing=True
         )
 
     # show correlation
-    PRF_values = np.geomspace(1e1, 1e5, num=50)
+    PRF_values = np.geomspace(1e0, 1e5, num=50)
     for PRF in PRF_values:
-        PRF_value = 1e-23 / (PRF - 1)
+        PRF_value = 1e-28 / (PRF - 1e-05)
         testing_results_folder = results_folder + "prf={:.2e}/".format(PRF)
         festim_sim_permeation_barrier(
             T=T, PRF=PRF_value, results_folder=testing_results_folder
