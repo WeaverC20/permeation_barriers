@@ -2,3 +2,5 @@
 *.xdmf
 *.csv
 *.pyc
+*.pdf
+*.svg
