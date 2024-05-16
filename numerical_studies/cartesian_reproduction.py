@@ -1,25 +1,45 @@
 import numpy as np
 import festim as F
+import h_transport_materials as htm
 
-# taken from (Reiter, 1990)
-D_0_lipb = 4.03e-08
-E_D_lipb = 0.2021
 
-# taken from (Aiello, 2008)
-S_0_lipb = 1.427214e23
-E_S_lipb = 0.133
+# Al2O3 properties
+diffusivity_al2o3 = (
+    htm.diffusivities.filter(material="alumina")
+    .filter(isotope="h")
+    .filter(author="serra")
+)
+D_al2o3 = diffusivity_al2o3[0]
+solubility_al2o3 = (
+    htm.solubilities.filter(material="alumina")
+    .filter(isotope="h")
+    .filter(author="serra")
+)
+S_al2o3 = solubility_al2o3[0]
 
-# taken from (Chen, 2021)
-D_0_eurofer = 3.15e-08
-E_D_eurofer = 0.0622
-S_0_eurofer = 2.4088e23
-E_S_eurofer = 0.3026
+# PbLi properties
+diffusivity_pbli = (
+    htm.diffusivities.filter(material="lipb")
+    .filter(isotope="h")
+    .filter(author="reiter")
+)
+D_pbli = diffusivity_pbli[0]
+solubility_pbli = (
+    htm.solubilities.filter(material="lipb").filter(isotope="h").filter(author="aiello")
+)
+S_pbli = solubility_pbli[0]
 
-# taken from
-D_0_al = 9.7e-08  # Diffusivity coefficient pre-exponential factor
-E_D_al = 0.829  # Diffusivity coefficient activation energy (eV)
-S_0_al = 9.133e19  # Solubility coefficient pre-exponential factor
-E_S_al = 0.234  # Solutbiility coefficient activation energy (eV)
+
+# eurofer properties
+diffusivity_eurofer = htm.diffusivities.filter(material="eurofer_97").filter(
+    author="chen"
+)
+D_eurofer = diffusivity_eurofer[0]
+
+solubility_eurofer = htm.solubilities.filter(material="eurofer_97").filter(
+    author="chen"
+)
+S_eurofer = solubility_eurofer[0]
 
 
 def model_with_barrier():
@@ -40,26 +60,26 @@ def model_with_barrier():
     lipb = F.Material(
         id=1,
         borders=[0, L - e],
-        D_0=D_0_lipb,
-        E_D=E_D_lipb,
-        S_0=S_0_lipb,
-        E_S=E_S_lipb,
+        D_0=D_pbli.pre_exp.magnitude,
+        E_D=D_pbli.act_energy.magnitude,
+        S_0=S_pbli.pre_exp.magnitude,
+        E_S=S_pbli.act_energy.magnitude,
     )
     barrier = F.Material(
         id=2,
         borders=[L - e, L + e],
-        D_0=D_0_al,
-        E_D=E_D_al,
-        S_0=S_0_al,
-        E_S=E_S_al,
+        D_0=D_al2o3.pre_exp.magnitude,
+        E_D=D_al2o3.act_energy.magnitude,
+        S_0=S_al2o3.pre_exp.magnitude,
+        E_S=S_al2o3.act_energy.magnitude,
     )
     eurofer = F.Material(
         id=3,
         borders=[L + e, 2 * L],
-        D_0=D_0_eurofer,
-        E_D=E_D_eurofer,
-        S_0=S_0_eurofer,
-        E_S=E_S_eurofer,
+        D_0=D_eurofer.pre_exp.magnitude,
+        E_D=D_eurofer.act_energy.magnitude,
+        S_0=S_eurofer.pre_exp.magnitude,
+        E_S=S_eurofer.act_energy.magnitude,
     )
     my_model.materials = F.Materials([lipb, barrier, eurofer])
 
@@ -90,7 +110,7 @@ def model_with_barrier():
             F.TotalVolume("solute", volume=3),
             F.SurfaceFlux("solute", surface=2),
         ],
-        filename=results_folder + "Derived_quantities.csv",
+        filename=results_folder + "derived_quantities.csv",
     )
     my_model.exports = F.Exports(
         [
@@ -126,18 +146,18 @@ def model_without_barrier():
     lipb = F.Material(
         id=1,
         borders=[0, 2e-03],
-        D_0=D_0_lipb,
-        E_D=E_D_lipb,
-        S_0=S_0_lipb,
-        E_S=E_S_lipb,
+        D_0=D_pbli.pre_exp.magnitude,
+        E_D=D_pbli.act_energy.magnitude,
+        S_0=S_pbli.pre_exp.magnitude,
+        E_S=S_pbli.act_energy.magnitude,
     )
     eurofer = F.Material(
         id=2,
         borders=[2e-03, 4e-03],
-        D_0=D_0_eurofer,
-        E_D=E_D_eurofer,
-        S_0=S_0_eurofer,
-        E_S=E_S_eurofer,
+        D_0=D_eurofer.pre_exp.magnitude,
+        E_D=D_eurofer.act_energy.magnitude,
+        S_0=S_eurofer.pre_exp.magnitude,
+        E_S=S_eurofer.act_energy.magnitude,
     )
     my_model.materials = F.Materials([lipb, eurofer])
 
@@ -167,7 +187,7 @@ def model_without_barrier():
             F.TotalVolume("solute", volume=2),
             F.SurfaceFlux("solute", surface=2),
         ],
-        filename=results_folder + "Derived_quantities.csv",
+        filename=results_folder + "derived_quantities.csv",
     )
     my_model.exports = F.Exports(
         [
@@ -203,18 +223,18 @@ def model_with_modification(PRF=1000):
     lipb = F.Material(
         id=1,
         borders=[0, 2e-03],
-        D_0=D_0_lipb,
-        E_D=E_D_lipb,
-        S_0=S_0_lipb,
-        E_S=E_S_lipb,
+        D_0=D_pbli.pre_exp.magnitude,
+        E_D=D_pbli.act_energy.magnitude,
+        S_0=S_pbli.pre_exp.magnitude,
+        E_S=S_pbli.act_energy.magnitude,
     )
     eurofer = F.Material(
         id=2,
         borders=[2e-03, 4e-03],
-        D_0=D_0_eurofer,
-        E_D=E_D_eurofer,
-        S_0=S_0_eurofer / PRF,
-        E_S=E_S_eurofer,
+        D_0=D_eurofer.pre_exp.magnitude,
+        E_D=D_eurofer.act_energy.magnitude,
+        S_0=S_eurofer.pre_exp.magnitude / PRF,
+        E_S=S_eurofer.act_energy.magnitude,
     )
     my_model.materials = F.Materials([lipb, eurofer])
 
@@ -244,7 +264,7 @@ def model_with_modification(PRF=1000):
             F.TotalVolume("solute", volume=2),
             F.SurfaceFlux("solute", surface=2),
         ],
-        filename=results_folder + "Derived_quantities.csv",
+        filename=results_folder + "derived_quantities.csv",
     )
     my_model.exports = F.Exports(
         [
@@ -264,6 +284,6 @@ def model_with_modification(PRF=1000):
     my_model.run()
 
 
-model_with_barrier()
-model_without_barrier()
-model_with_modification(PRF=1.6e6)
+# model_with_barrier()
+# model_without_barrier()
+model_with_modification(PRF=3.85e4)
