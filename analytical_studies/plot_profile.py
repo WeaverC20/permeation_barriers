@@ -61,6 +61,11 @@ plt.xlim(0, 1.4)
 plt.ylim(0, 1)
 plt.xlabel(r"x")
 plt.ylabel(r"c$_{\mathrm{m}}$")
+ax = plt.gca()
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+
+plt.savefig("cartesian_profile_varying_diffusivity.png")
 
 # varying S_coating only
 fig, axs = plt.subplots()
@@ -87,6 +92,11 @@ plt.xlim(0, 1.4)
 plt.ylim(0, 1)
 plt.xlabel(r"x")
 plt.ylabel(r"c$_{\mathrm{m}}$")
+ax = plt.gca()
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+
+plt.savefig("cartesian_profile_varying_solutbility.png")
 
 
 plt.show()
