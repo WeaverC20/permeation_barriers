@@ -16,6 +16,7 @@ expr4 = Kr2*c2**2
 # Dimensionless surface limited flux
 JSL = Kd1*P * (1 + (Kr1-Kr2)/(Kr1+Kr2))
 
+# Flux continuity equations
 eq1 = sp.Eq(expr1/JSL, expr2/JSL)
 eq2 = sp.Eq(expr2/JSL, expr3/JSL)
 eq3 = sp.Eq(expr3/JSL, expr4/JSL)
