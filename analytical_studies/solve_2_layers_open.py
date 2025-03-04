@@ -4,30 +4,40 @@ from sympy import *
 D1, D2 = symbols('D1, D2')
 x_int = Symbol("x_int")
 S1, S2 = symbols('S1, S2')
+Kd, Kr = symbols('Kd, Kr')
 u_0, u_L = symbols('c_0, c_L')
 a1, a2, b1, b2 = symbols('a1, a2, b1, b2')
 x_L = Symbol('L')
 x_0 = 0
 x = Symbol("x")
-f = Symbol("f")
+P = Symbol("P")
+u_L = 0
 
-u1 = -1/2*f/D1*x**2 + a1*x + b1
-u2 = -1/2*f/D2*x**2 + a2*x
+u1 = a1*x + b1
+u2 = a2*x + b2
 
 list_of_equations = [
-    u1.subs(x, x_int)/S1 - u2.subs(x, x_int)/S2,  # Continuity at x_int
-    D1*diff(u1, x).subs(x, x_int) - D2*diff(u2, x).subs(x, x_int),  # Flux continuity at x_int
-    u1.subs(x, x_L),  # Concentration = 0 at x_L
+    u1.subs(x, x_int)/S1 - u2.subs(x, x_int)/S2, # Continuity at x_int
+    D1*diff(u1, x).subs(x, x_int) - D2*diff(u2, x).subs(x, x_int), # Flux continuity at x_int
+    diff(u1, x).subs(x, x_0) - Kd*P + Kr*u1.subs(x, x_0), # Neumann boundary condition at x_0
+    u2.subs(x, x_L), #concentration = 0 at x_L
+
+    # Kd*P-Kr1*u1.subs(x, x_0)**2 + D1*(u1.subs(x, x_int) - u1.subs(x, x_0))/(x_int-x_0), # Flux Continuity at x_0
+    # u1.subs(x, x_int)/S1 - u2.subs(x, x_int)/S2,  # Continuity at x_int
+    # D1*diff(u1, x).subs(x, x_int) - D2*diff(u2, x).subs(x, x_int),  # Flux continuity at x_int
+    # -D2*(u2.subs(x, x_L) - u2.subs(x, x_int))/(x_L-x_int) - Kr2*u2.subs(x, x_L)**2, #Flux continuity at x_L
+    # u2.subs(x, x_L),  # Concentration = 0 at x_L
+
     # diff(u2, x).subs(x, x_L),  # Neumann boundary condition: flux = 0 at x_L
     # diff(u1, x).subs(x, x_0),  # Neumann boundary condition: flux = 0 at x_L
 ]
 
-res = solve(list_of_equations, a1, a2, b1)
+res = solve(list_of_equations, a1, a2, b1, b2)
 
-print(simplify(res[a1]))
-print(simplify(res[a2]))
-print(simplify(res[b1]))
-
+print("a1 :", simplify(res[a1]))
+print("a2 :", simplify(res[a2]))
+print("b1 :", simplify(res[b1]))
+print("b2 :", simplify(res[b2]))
 
 
 
@@ -43,11 +53,14 @@ params = {
     S2: 5.0,
     x_int: 0.2,
     x_L: 1.0,
-    f: 1.0
+    P: 100,
+    Kd: 1,
+    Kr: 1,
 }
 
 # Substitute the solutions into u1 and u2 and evaluate them numerically
 u1_sol = u1.subs(res).subs(params)
+print(u1_sol)
 u2_sol = u2.subs(res).subs(params)
 
 # Now evaluate the symbolic expressions to ensure no symbolic variables remain
