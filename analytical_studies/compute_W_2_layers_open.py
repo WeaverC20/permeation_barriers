@@ -34,7 +34,5 @@ print("\n\n\n")
 # extracting factors of important vars
 important_vars = [c1, c2]
 collected_eqs = [sp.collect(eq.lhs - eq.rhs, var) for eq in [eq1, eq2, eq3] for var in important_vars]
-
-# Pretty print the collected equations
 for eq in collected_eqs:
     sp.pprint(eq)
