@@ -20,10 +20,10 @@ JSL = Kd1*P * (1 + (Kr1-Kr2)/(Kr1+Kr2))
 eq1 = sp.Eq(expr1/JSL, expr2/JSL)
 eq2 = sp.Eq(expr2/JSL, expr3/JSL)
 eq3 = sp.Eq(expr3/JSL, expr4/JSL)
-eq4 = sp.Eq(Ks1, (Kd1/Kr1)**(1/2))
+# eq4 = sp.Eq(Ks1, (Kd1/Kr1)**(1/2))
 
 # Combine them
-all_eqs = sp.And(eq1, eq2, eq3, eq4)
+all_eqs = sp.And(eq1, eq2, eq3)
 
 # Factoring Eqs
 factored_eqs = sp.factor_terms(all_eqs)
@@ -33,7 +33,7 @@ print("\n\n\n")
 
 # extracting factors of important vars
 important_vars = [c1, c2]
-collected_eqs = [sp.collect(eq.lhs - eq.rhs, var) for eq in [eq1, eq2, eq3, eq4] for var in important_vars]
+collected_eqs = [sp.collect(eq.lhs - eq.rhs, var) for eq in [eq1, eq2, eq3] for var in important_vars]
 
 # Pretty print the collected equations
 for eq in collected_eqs:
