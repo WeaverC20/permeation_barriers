@@ -20,9 +20,9 @@ u2 = a2*x + b2
 list_of_equations = [
     u1.subs(x, x_int)/S1 - u2.subs(x, x_int)/S2, # Continuity at x_int
     D1*diff(u1, x).subs(x, x_int) - D2*diff(u2, x).subs(x, x_int), # Flux continuity at x_int
-    diff(u1, x).subs(x, x_0) + Kd1*P - Kr1*u1.subs(x, x_0), # Neumann boundary condition at x_0
+    diff(u1, x).subs(x, x_0) + Kd1*P - Kr1*u1.subs(x, x_0), # Kr1*u1.subs(x, x_0), # Neumann boundary condition at x_0
     # u2.subs(x, x_L), #concentration = 0 at x_L
-    diff(u1, x).subs(x, x_L) - Kr2*u2.subs(x, x_L), # Neumann boundary condition at x_L
+    diff(u1, x).subs(x, x_L) - Kr2*u2.subs(x, x_L) # Kr2*u2.subs(x, x_L), # Neumann boundary condition at x_L
 
     # Kd*P-Kr1*u1.subs(x, x_0)**2 + D1*(u1.subs(x, x_int) - u1.subs(x, x_0))/(x_int-x_0), # Flux Continuity at x_0
     # u1.subs(x, x_int)/S1 - u2.subs(x, x_int)/S2,  # Continuity at x_int
@@ -34,7 +34,11 @@ list_of_equations = [
     # diff(u1, x).subs(x, x_0),  # Neumann boundary condition: flux = 0 at x_L
 ]
 
-res = solve(list_of_equations, a1, a2, b1, b2)
+for eq in list_of_equations:
+    print(eq.simplify())
+
+list_of_equations = [simplify(eq) for eq in list_of_equations]
+res = solve(list_of_equations, [a1, a2, b1, b2])
 
 print("a1 :", simplify(res[a1]))
 print("a2 :", simplify(res[a2]))
